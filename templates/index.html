@@ -17,7 +17,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(45deg, #1DA1F2, #0066cc, #1C8EF2);
-            color: #333;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -26,7 +26,7 @@
             overflow: hidden;
         }
 
-        /* Background Twitter Icons */
+        /* Twitter Icons Styling */
         .twitter-icon {
             position: absolute;
             font-size: 30px;
@@ -34,24 +34,14 @@
             animation: floatUpDown 3s infinite alternate ease-in-out, rotateIcon 6s infinite alternate ease-in-out;
         }
 
-        /* Floating Up & Down */
         @keyframes floatUpDown {
-            from {
-                transform: translateY(0px);
-            }
-            to {
-                transform: translateY(15px);
-            }
+            from { transform: translateY(0px); }
+            to { transform: translateY(15px); }
         }
 
-        /* Slight Rotation Effect */
         @keyframes rotateIcon {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(10deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(10deg); }
         }
 
         /* Glass Effect for the main box */
@@ -88,18 +78,21 @@
             gap: 15px;
         }
 
-        .input-container input {
+        .input-container textarea {
             padding: 15px;
-            font-size: 18px;
+            font-size: 16px;
             border-radius: 10px;
             border: 2px solid #ddd;
             background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            resize: none;
+            height: 120px;
+            outline: none;
             transition: all 0.3s ease;
         }
 
-        .input-container input:focus {
+        .input-container textarea:focus {
             border-color: #0066cc;
-            outline: none;
             box-shadow: 0 0 8px rgba(0, 102, 204, 0.5);
         }
 
@@ -120,30 +113,17 @@
             box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
         }
 
-        /* Sentiment Result Styling */
-        .result-container {
-            display: none;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f1f1f1;
-            border-radius: 10px;
-            color: #333;
-        }
-
-        .positive { color: #28a745; font-weight: bold; }
-        .negative { color: #dc3545; font-weight: bold; }
-        .neutral { color: #6c757d; font-weight: bold; }
-
         footer {
             position: absolute;
             bottom: 20px;
             font-size: 14px;
-            color: #aaa;
+            color: #ddd;
             text-align: center;
+            width: 100%;
         }
 
         footer a {
-            color: #0066cc;
+            color: #fff;
             text-decoration: none;
         }
 
@@ -162,14 +142,10 @@
         <h1>Twitter Sentiment Analysis</h1>
         <p class="tagline">Enter a tweet to analyze its sentiment!</p>
 
-        <div class="input-container">
-            <input type="text" id="tweetInput" placeholder="Type your tweet here..." autofocus>
-            <button onclick="analyzeSentiment()">Analyze Sentiment</button>
-        </div>
-
-        <div class="result-container" id="resultContainer">
-            <p id="sentimentResult">Sentiment will be displayed here.</p>
-        </div>
+        <form class="input-container" action="/predict" method="POST">
+            <textarea name="message" placeholder="Type your tweet here..." required></textarea>
+            <button type="submit">Analyze Sentiment</button>
+        </form>
     </div>
 
     <footer>
@@ -177,36 +153,6 @@
     </footer>
 
     <script>
-        function analyzeSentiment() {
-            let tweet = document.getElementById('tweetInput').value.trim();
-            let resultContainer = document.getElementById('resultContainer');
-            let sentimentResult = document.getElementById('sentimentResult');
-
-            if (tweet === "") {
-                alert("Please enter a tweet.");
-                return;
-            }
-
-            let sentiment = getSentiment(tweet);
-
-            resultContainer.style.display = 'block';
-            sentimentResult.textContent = `Sentiment: ${sentiment}`;
-            sentimentResult.className = sentiment.toLowerCase();
-        }
-
-        function getSentiment(tweet) {
-            let positiveWords = ["love", "great", "awesome", "fantastic", "amazing", "happy", "good"];
-            let negativeWords = ["hate", "terrible", "awful", "horrible", "bad", "sad","worst"];
-
-            let lowerTweet = tweet.toLowerCase();
-
-            if (positiveWords.some(word => lowerTweet.includes(word))) return "Positive";
-            if (negativeWords.some(word => lowerTweet.includes(word))) return "Negative";
-
-            return "Neutral";
-        }
-
-        // Function to create animated Twitter icons in the background
         function createTwitterIcons() {
             const iconContainer = document.getElementById("background-icons");
             const numberOfIcons = 25; // Adjust the number of icons
