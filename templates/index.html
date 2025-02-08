@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Sentiment Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(45deg, #1DA1F2, #0066cc, #1C8EF2);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Glass Effect for the main box */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .tagline {
+            font-size: 16px;
+            color: #ddd;
+            margin-bottom: 30px;
+        }
+
+        /* Input and Button Styling */
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-container input {
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .input-container input:focus {
+            border-color: #0066cc;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 102, 204, 0.5);
+        }
+
+        .input-container button {
+            padding: 15px;
+            font-size: 18px;
+            color: white;
+            background-color: #0066cc;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .input-container button:hover {
+            background-color: #005bb5;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+        }
+
+        /* Sentiment Result Styling */
+        .result-container {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .positive { color: #28a745; }
+        .negative { color: #dc3545; }
+        .neutral { color: #6c757d; }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 14px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        footer a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animated Twitter Icons */
+        .twitter-icon {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, color 0.3s ease;
+            animation: floatUpDown 3s infinite alternate ease-in-out, rotateIcon 6s infinite alternate ease-in-out;
+        }
+
+        .twitter-icon:hover {
+            transform: scale(1.2);
+            color: #1DA1F2;
+        }
+
+        /* Floating Up & Down */
+        @keyframes floatUpDown {
+            from {
+                transform: translateY(0px);
+            }
+            to {
+                transform: translateY(15px);
+            }
+        }
+
+        /* Slight Rotation Effect */
+        @keyframes rotateIcon {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(10deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main content container -->
+    <div class="container">
+        <h1>Twitter Sentiment Analysis</h1>
+        <p class="tagline">Enter a tweet to analyze its sentiment!</p>
+
+        <div class="input-container">
+            <input type="text" id="tweetInput" placeholder="Type your tweet here..." autofocus>
+            <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <p id="sentimentResult">Sentiment will be displayed here.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Sentiment Analysis | <a href="#">Privacy Policy</a></p>
+    </footer>
+
+    <script>
+        function analyzeSentiment() {
+            let tweet = document.getElementById('tweetInput').value;
+            let resultContainer = document.getElementById('resultContainer');
+            let sentimentResult = document.getElementById('sentimentResult');
+
+            if (tweet === "") {
+                alert("Please enter a tweet.");
+                return;
+            }
+
+            let sentiment = getSentiment(tweet);
+
+            resultContainer.style.display = 'block';
+            sentimentResult.textContent = `Sentiment: ${sentiment}`;
+            sentimentResult.className = "";
+
+            if (sentiment === "Positive") {
+                sentimentResult.classList.add('positive');
+            } else if (sentiment === "Negative") {
+                sentimentResult.classList.add('negative');
+            } else {
+                sentimentResult.classList.add('neutral');
+            }
+        }
+
+        function getSentiment(tweet) {
+            if (tweet.toLowerCase().includes("happy") || tweet.toLowerCase().includes("good")) {
+                return "Positive";
+            } else if (tweet.toLowerCase().includes("sad") || tweet.toLowerCase().includes("bad")) {
+                return "Negative";
+            } else {
+                return "Neutral";
+            }
+        }
+
+        // Function to create stylish Twitter icons with animations
+        document.addEventListener("DOMContentLoaded", function () {
+            const numberOfIcons = 30;
+
+            for (let i = 0; i < numberOfIcons; i++) {
+                let x = Math.random() * window.innerWidth;
+                let y = Math.random() * window.innerHeight;
+                let size = Math.random() * 30 + 20; // Random size between 20px and 50px
+                let opacity = Math.random() * 0.6 + 0.2; // Opacity between 0.2 and 0.8
+
+                createTwitterIcon(x, y, size, opacity);
+            }
+        });
+
+        function createTwitterIcon(x, y, size, opacity) {
+            const icon = document.createElement("i");
+            icon.className = "fab fa-twitter twitter-icon";
+            document.body.appendChild(icon);
+
+            icon.style.left = '${x}px';
+            icon.style.top = '${y}px';
+            icon.style.fontSize = '${size}px';
+            icon.style.opacity = opacity;
+        }
+    </script>
+
+</body>
+</html>
