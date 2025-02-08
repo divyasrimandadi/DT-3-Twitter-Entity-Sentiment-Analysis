@@ -3,172 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Entity Sentiment Analysis</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Twitter Sentiment Analysis</title>
     <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1DA1F2, #141E30);
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Glass Effect for the main box */
-        .container {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 600;
+            margin: 0;
+            font-family: Arial, sans-serif;
             color: #fff;
-            margin-bottom: 20px;
-        }
-
-        .tagline {
-            font-size: 18px;
-            color: #ddd;
-            margin-bottom: 30px;
-        }
-
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .input-container input {
-            padding: 15px;
-            font-size: 16px;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .input-container button {
-            padding: 15px;
-            font-size: 18px;
-            color: white;
+            text-align: center;
+            overflow-x: hidden;
             background-color: #1DA1F2;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
 
-        .input-container button:hover {
-            background-color: #005bb5;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(29, 161, 242, 0.4);
+        .icon-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .icon {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('https://cdn-icons-png.flaticon.com/512/733/733579.png') no-repeat;
+            background-size: contain;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .icon.highlight {
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            0% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #fff;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #fff;
+            color: #1DA1F2;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            background: #1DA1F2;
+            color: #fff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .input-section {
+            margin-top: 20px;
+        }
+
+        .input-section input {
+            width: 80%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .input-section button {
+            margin-top: 10px;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            font-size: 1.2rem;
+        }
+
+        .result-positive {
+            color: green;
+        }
+
+        .result-negative {
+            color: red;
+        }
+
+        .result-neutral {
+            color: black;
         }
 
         footer {
-            position: absolute;
-            bottom: 20px;
-            font-size: 14px;
-            color: #aaa;
-            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9rem;
         }
 
         footer a {
-            color: #1DA1F2;
+            color: #fff;
             text-decoration: none;
+            font-weight: bold;
         }
 
         footer a:hover {
             text-decoration: underline;
         }
-
-        /* Floating Twitter Icons */
-        .twitter-icon {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.5);
-            animation: float 5s infinite ease-in-out;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-        }
     </style>
+    <script>
+        function generateIcons() {
+            const container = document.querySelector('.icon-background');
+            const iconCount = 50;
+
+            for (let i = 0; i < iconCount; i++) {
+                const icon = document.createElement('div');
+                icon.classList.add('icon');
+
+                // Randomly assign the highlight class
+                if (Math.random() > 0.7) {
+                    icon.classList.add('highlight');
+                }
+
+                // Random position
+                icon.style.top = `${Math.random() * 100}%`;
+                icon.style.left = `${Math.random() * 100}%`;
+
+                container.appendChild(icon);
+            }
+        }
+
+        function analyzeSentiment() {
+            const input = document.getElementById('tweetInput').value;
+            const resultSection = document.getElementById('resultSection');
+
+            if (!input.trim()) {
+                resultSection.textContent = 'Please enter a valid tweet!';
+                resultSection.className = 'result-section result-neutral';
+                return;
+            }
+
+            // Mock sentiment analysis logic (replace this with backend integration)
+            const positiveKeywords = ['good', 'great', 'happy', 'love', 'excellent','pretty'];
+            const negativeKeywords = ['bad', 'sad', 'hate', 'angry', 'terrible'];
+
+            let sentiment = 'Neutral';
+            let sentimentClass = 'result-neutral';
+
+            for (const keyword of positiveKeywords) {
+                if (input.toLowerCase().includes(keyword)) {
+                    sentiment = 'Positive';
+                    sentimentClass = 'result-positive';
+                    break;
+                }
+            }
+
+            for (const keyword of negativeKeywords) {
+                if (input.toLowerCase().includes(keyword)) {
+                    sentiment = 'Negative';
+                    sentimentClass = 'result-negative';
+                    break;
+                }
+            }
+
+            resultSection.textContent = `The sentiment of the tweet is: ${sentiment}`;
+            resultSection.className = `result-section ${sentimentClass}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', generateIcons);
+    </script>
 </head>
 <body>
+    <header>
+        <h1>Twitter Sentiment Analysis</h1>
+    </header>
 
-    <!-- Main content container -->
+    <div class="icon-background"></div>
+
     <div class="container">
-        <h1>Twitter Entity Sentiment Analysis</h1>
-        <p class="tagline">Discover the sentiment of any Twitter entity in seconds!</p>
-
-        <div class="input-container">
-            <input type="text" id="entityInput" placeholder="Enter a Twitter entity (e.g., @username or #hashtag)..." autofocus>
-            <button onclick="analyzeSentiment()">Analyze Sentiment</button>
-        </div>
-
-        <div class="result-container" id="resultContainer" style="display: none; margin-top: 20px;">
-            <p id="sentimentResult" style="color: #fff; font-size: 18px;">Sentiment result will be displayed here.</p>
+        <div class="card">
+            <h2>Analyze Tweets</h2>
+            <p>Input a tweet to predict its sentiment and entities in real time.</p>
+            <div class="input-section">
+                <input type="text" id="tweetInput" placeholder="Enter a tweet">
+                <button class="btn" onclick="analyzeSentiment()">Analyze</button>
+            </div>
+            <div id="resultSection" class="result-section"></div>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 Twitter Analysis | <a href="#">Privacy Policy</a></p>
+        <p>&copy; 2025 Twitter Sentiment Analysis | <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a></p>
     </footer>
-
-    <script>
-        function analyzeSentiment() {
-            const entity = document.getElementById('entityInput').value;
-            const resultContainer = document.getElementById('resultContainer');
-            const sentimentResult = document.getElementById('sentimentResult');
-
-            if (!entity) {
-                alert('Please enter a Twitter entity!');
-                return;
-            }
-
-            // Simulated sentiment analysis (replace with API or advanced logic)
-            const sentiments = ['Positive', 'Negative', 'Neutral'];
-            const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
-
-            resultContainer.style.display = 'block';
-            sentimentResult.textContent = `The sentiment for ${entity} is: ${randomSentiment}`;
-        
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const icons = 50;
-            for (let i = 0; i < icons; i++) {
-                const icon = document.createElement('i');
-                icon.className = 'fab fa-twitter twitter-icon';
-                icon.style.left = '${Math.random() * 100}vw';
-                icon.style.top = '${Math.random() * 100}vh';
-                icon.style.fontSize = '${Math.random() * 20 + 10}px';
-                icon.style.opacity = Math.random();
-                document.body.appendChild(icon);
-            }
-        });
-    </script>
 </body>
 </html>
