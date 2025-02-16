@@ -1,16 +1,23 @@
-from flask import Flask,render_template,request
-app=Flask(__name__)
-@app.route("/",methods=["GET","POST"])
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
+@app.route("/")
 def home():
-    
-    if request.method=="POST":
-        msg=request.form.get("message")
-        print(msg)
-    else:
-        return  render_template("index.html",methods=["GET","POST"])
+    return render_template("index.html")
 
+@app.route("/predict", methods=["GET", "POST"])
+def predict():
+    if request.method == "POST":
+        message = request.form.get("message")  # Get input text from form
+        return redirect(url_for("result", sentiment="Positive", user_input=message))  # Redirect to result page
+    return render_template("predict.html")
 
-
+@app.route("/result")
+def result():
+    sentiment = request.args.get("sentiment", "Neutral")  # Default sentiment
+    user_input = request.args.get("user_input", "No input provided")
+    return render_template("result.html", sentiment=sentiment, user_input=user_input)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0",port=5153)
+    app.run(debug=True)
